@@ -1,0 +1,56 @@
+services:
+
+  # 1. Хэрэглэгчийн сервис (ЭНЭ ХЭСЭГ БАЙХГҮЙ ЭСВЭЛ НЭР НЬ ЗӨРСӨН БАЙНА)
+  user-service:
+    image: user-service-img
+    build:
+      context: ./UserService
+      dockerfile: Dockerfile
+    ports:
+      - "5150:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - postgres-db
+
+  # 2. Барааны сервис
+  product-service:
+    image: product-service-img
+    build:
+      context: ./ProductService
+      dockerfile: Dockerfile
+    ports:
+      - "5248:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - postgres-db
+      - user-service # Энд user-service-ийг хайж байгаа тул дээр заавал байх ёстой!
+
+  # 3. Өгөгдлийн сан
+  postgres-db:
+    image: postgres:16
+    container_name: postgres_microservices
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: microservices_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 4. API Gateway
+  api-gateway:
+    image: api-gateway-img
+    build:
+      context: ./ApiGateway
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8080"
+    depends_on:
+      - user-service
+      - product-service
+
+volumes:
+  postgres_data:

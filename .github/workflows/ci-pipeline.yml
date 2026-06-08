@@ -1,0 +1,35 @@
+name: Microservices CI Pipeline
+
+# Хэзээ ажиллахыг заана: main branch руу код орох эсвэл pull request үүсэх үед
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest # GitHub-ийн үнэгүй Linux сервер дээр ажиллана
+
+    steps:
+    # 1. Кодоо GitHub сервер рүү татаж авах
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. .NET ажиллах орчныг бэлдэх (.NET-ийн хувилбартаа тааруулж 8.0 эсвэл 10.0 болгоорой)
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0' # Эсвэл '10.0'
+
+    # 3. Төслүүдийн NuGet package-үүдийг татах (Restore)
+    - name: Restore dependencies
+      run: dotnet restore MicroservicesDemo.sln
+
+    # 4. Бүх төслийг зэрэг Build хийж алдааг шалгах
+    - name: Build all microservices
+      run: dotnet build MicroservicesDemo.sln --configuration Release --no-restore
+
+    # 5. Хэрэв төсөлд Unit Test байгаа бол ажиллуулах
+    - name: Run Tests
+      run: dotnet test MicroservicesDemo.sln --configuration Release --no-build
