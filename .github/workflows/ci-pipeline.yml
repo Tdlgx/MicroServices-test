@@ -24,12 +24,12 @@ jobs:
 
     # 3. Төслүүдийн NuGet package-үүдийг татах (Restore)
     - name: Restore dependencies
-      run: dotnet restore MicroservicesDemo.sln
+      run: dotnet restore MicroservicesDemo.slnx
 
     # 4. Бүх төслийг зэрэг Build хийж алдааг шалгах
     - name: Build all microservices
-      run: dotnet build MicroservicesDemo.sln --configuration Release --no-restore
+      run: dotnet build MicroservicesDemo.slnx --configuration Release --no-restore
 
     # 5. Хэрэв төсөлд Unit Test байгаа бол ажиллуулах
     - name: Run Tests
-      run: dotnet test MicroservicesDemo.sln --configuration Release --no-build
+      run: dotnet test MicroservicesDemo.slnx --configuration Release --no-build
