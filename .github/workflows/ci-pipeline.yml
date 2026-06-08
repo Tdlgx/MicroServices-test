@@ -28,7 +28,7 @@ jobs:
 
     # 4. Бүх төслийг зэрэг Build хийж алдааг шалгах
     - name: Build all microservices
-      run: dotnet build MicroservicesDemo.slnx --configuration Release --no-restore
+      run: dotnet build MicroservicesDemo.slnx --configuration Release
 
     # 5. Хэрэв төсөлд Unit Test байгаа бол ажиллуулах
     - name: Run Tests
